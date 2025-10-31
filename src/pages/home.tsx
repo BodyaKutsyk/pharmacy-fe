@@ -12,6 +12,7 @@ import {
   Paper,
   Divider,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionCard } from '@/components/common/action-card';
 import { capitalizeFirstLetter } from '@/utils';
@@ -31,6 +32,7 @@ const Stat = ({ label, value }: { label: string; value: string }) => (
 );
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack
@@ -73,7 +75,7 @@ const Home = () => {
             title="Register customer"
             subtitle="Add new customer"
             icon={<PersonIcon />}
-            onClick={() => {}}
+            onClick={() => navigate('/customer/register')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>

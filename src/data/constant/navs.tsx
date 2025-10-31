@@ -1,10 +1,10 @@
 import { cloneDeep } from 'lodash';
 import { Link } from 'react-router-dom';
 
-import { HOME_PATH, LOGIN_PATH } from './path';
+import { HOME_PATH, LOGIN_PATH, REGISTER_CUSTOMER } from './path';
 import { TypeNavs, TypeRoutes } from './type-navs';
 import { AuthGuard } from '@/api/authGuard.tsx';
-import { Home, Login } from '@/pages';
+import { Home, Login, RegisterCustomer } from '@/pages';
 import { capitalizeFirstLetter } from '@/utils';
 
 const navs: TypeNavs[] = [
@@ -14,6 +14,15 @@ const navs: TypeNavs[] = [
     element: (
       <AuthGuard>
         <Home />
+      </AuthGuard>
+    ),
+  },
+  {
+    key: REGISTER_CUSTOMER,
+    label: 'register customer',
+    element: (
+      <AuthGuard>
+        <RegisterCustomer />
       </AuthGuard>
     ),
   },
