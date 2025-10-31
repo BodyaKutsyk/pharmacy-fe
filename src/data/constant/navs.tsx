@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { HOME_PATH, LOGIN_PATH } from './path';
 import { TypeNavs, TypeRoutes } from './type-navs';
+import { AuthGuard } from '@/api/authGuard.tsx';
 import { Home, Login } from '@/pages';
 import { capitalizeFirstLetter } from '@/utils';
 
@@ -10,7 +11,11 @@ const navs: TypeNavs[] = [
   {
     key: HOME_PATH,
     label: 'home',
-    element: <Home />,
+    element: (
+      <AuthGuard>
+        <Home />
+      </AuthGuard>
+    ),
   },
   {
     key: LOGIN_PATH,

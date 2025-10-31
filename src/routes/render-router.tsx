@@ -3,18 +3,19 @@ import { FC, lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 
 import { routeList } from '@/data/constant/navs';
+import { useAuth } from '@/hooks/useAuth.ts';
 import LayoutComponent from '@/layout';
 
 const NotFound = lazy(() => import('@/pages/not-found'));
 
-const routes = [
+const routes = (isAuthenticated: boolean = false) => [
   {
     path: '/',
     element: <LayoutComponent />,
     children: [
       {
-        path: '',
-        element: <Navigate to="home" />,
+        path: isAuthenticated ? '/' : '/login',
+        element: <Navigate to={isAuthenticated ? '/home' : '/login'} />,
       },
       ...routeList,
       {
@@ -26,9 +27,9 @@ const routes = [
 ];
 
 const RenderRouter: FC = () => {
-  const element = useRoutes(routes);
+  const { isAuthenticated } = useAuth();
 
-  return element;
+  return useRoutes(routes(isAuthenticated));
 };
 
 export default RenderRouter;

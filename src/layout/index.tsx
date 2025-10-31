@@ -9,7 +9,7 @@ import HeaderComponent from './header';
 
 const LayoutComponent = () => {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full flex flex-col justify-between">
       <HeaderComponent />
       <div className="px-4 py-20 flex flex-col min-h-[calc(100vh-200px)]">
         <ErrorBoundary fallbackRender={fallbackRender}>

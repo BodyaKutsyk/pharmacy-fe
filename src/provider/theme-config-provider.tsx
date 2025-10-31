@@ -1,8 +1,9 @@
-import { ReactElement, useCallback, useEffect } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo } from 'react';
 
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 
+import { darkTheme, lightTheme } from '@/app/styles/theme.ts';
 import { useThemeStore } from '@/hooks';
 
 type Props = {
@@ -35,7 +36,6 @@ function LayoutConfigProvider({ children }: Props) {
     root.classList.remove('light', 'dark');
     setThemeState(theme === 'dark');
 
-    // watch system theme change
     if (!localStorage.getItem('theme')) {
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -45,15 +45,13 @@ function LayoutConfigProvider({ children }: Props) {
     root.classList.add(theme);
   }, [matchMode, setThemeState, theme]);
 
+  const muiTheme = useMemo(
+    () => (theme === 'dark' ? darkTheme : lightTheme),
+    [theme],
+  );
+
   return (
-    <ThemeProvider
-      theme={createTheme({
-        palette: {
-          mode: theme,
-        },
-      })}
-    >
-      {' '}
+    <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>

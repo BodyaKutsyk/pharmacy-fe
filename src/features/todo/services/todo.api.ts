@@ -1,5 +1,5 @@
 import { ResponseData, TodoData, TodoDataMutation } from './types';
-import axiosClient from '@/apis/axios-client';
+import axiosClient from '@/api/axios-client';
 
 const baseUrl = 'todos';
 

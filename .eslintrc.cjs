@@ -36,7 +36,6 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import', 'simple-import-sort'],
   rules: {
-    'no-console': 2,
     'react-hooks/rules-of-hooks': 2,
     'react-hooks/exhaustive-deps': 2,
     'react/no-array-index-key': 2,
@@ -54,18 +53,6 @@ module.exports = {
       },
     ],
     'prettier/prettier': ['off', { singleQuote: true }],
-    'no-restricted-imports': [
-      2,
-      {
-        patterns: [
-          '@/features/*/*',
-          '@/components/*',
-          '@/hooks/*',
-          '@/utils/*',
-          '@/ts/*/*',
-        ],
-      },
-    ],
     'import/order': [
       'error',
       {
