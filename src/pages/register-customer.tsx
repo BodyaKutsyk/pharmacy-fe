@@ -1,20 +1,109 @@
-import { Box, Container, Paper, Stack, Typography } from '@mui/material';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Box,
+  Container,
+  Paper,
+  Stack,
+  TextFieldProps,
+  Typography,
+} from '@mui/material';
+import { styled } from '@mui/material';
 import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
+import dayjs from 'dayjs';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 import PhoneInput from 'react-phone-input-material-ui';
+import { useNavigate } from 'react-router-dom';
+import validator from 'validator';
+import { z } from 'zod';
 
 import { DatePicker } from '@/components/common/date-picker';
+import { useAddCustomer } from '@/features/customer/hooks/useCustomer.ts';
 
-/*
-  phone: varchar('phone', { length: 255 }).notNull(),
-  firstName: varchar('first_name', { length: 255 }).notNull(),
-  lastName: varchar('last_name', { length: 255 }).notNull(),
-  birthDate: date({ mode: 'date' }).notNull(),
-* */
+const FormContainer = styled('form')(() => ({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '36px',
+}));
+
+const ErrorMessage = styled('p')(() => ({
+  color: '#f44336',
+  fontSize: '12px',
+}));
+
+const formSchema = z.object({
+  firstName: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z\s'-]+$/, {
+      message:
+        'First name can only contain letters, spaces, hyphens, and apostrophes',
+    })
+    .min(2, { message: 'First name is too short' })
+    .max(20, { message: 'First name is too large' }),
+  lastName: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z\s'-]+$/, {
+      message:
+        'Last name can only contain letters, spaces, hyphens, and apostrophes',
+    })
+    .min(2, { message: 'Last name is too short' })
+    .max(20, { message: 'Last name is too large' }),
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
+  phone: z.string().refine((v) => validator.isMobilePhone(v, 'uk-UA')),
+  birthDate: z
+    .date()
+    .min(new Date('1900-01-01'), { message: 'Too old!' })
+    .max(new Date(), { message: 'Too young!' }),
+});
+
+type FormSchema = z.infer<typeof formSchema>;
 
 const RegisterCustomer = () => {
+  const { mutate: addCustomer } = useAddCustomer();
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      birthDate: new Date(),
+    },
+  });
+
+  const PhoneTextField = (props: TextFieldProps) => {
+    return <TextField {...props} error={!!errors.phone} />;
+  };
+
+  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+    const payload = {
+      ...data,
+      birthDate: dayjs(data.birthDate).format('YYYY-MM-DD'),
+    };
+
+    addCustomer(payload, {
+      onSuccess: () => {
+        navigate('/home');
+      },
+      onError: (e) => {
+        let message = 'Failed to register customer';
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+        if (e?.response.data.message) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+          message = e.response.data.response;
+        }
+
+        toast.error(message);
+      },
+    });
+  };
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack
@@ -32,74 +121,102 @@ const RegisterCustomer = () => {
           </Typography>
         </Box>
         <Paper elevation={0} sx={{ p: 4 }}>
-          <FormControl sx={{ gap: 4 }} fullWidth defaultValue="">
-            <Stack direction="row" justifyContent="space-between" gap={4}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  width: '50%',
-                }}
-              >
-                <FormLabel htmlFor="firstName">First name</FormLabel>
-                <TextField
-                  id="firstName"
-                  name="firstName"
-                  placeholder="Enter first name"
-                />
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  width: '50%',
-                }}
-              >
-                <FormLabel htmlFor="lastName">Last name</FormLabel>
-                <TextField
-                  required
-                  id="lastName"
-                  name="lastName"
-                  placeholder="Enter last name"
-                />
-              </Box>
-            </Stack>
-            <Stack direction="row" justifyContent="space-between" gap={4}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  width: '50%',
-                }}
-              >
-                <FormLabel htmlFor="firstName">Phone</FormLabel>
-                <PhoneInput
-                  component={TextField}
-                  label=""
-                  country="ua"
-                  onChange={() => {}}
-                />
-              </Box>
+          <FormContainer onSubmit={handleSubmit(onSubmit)}>
+            <Box flexDirection="column" sx={{ display: 'flex', gap: 2 }}>
+              <Stack direction="row" justifyContent="space-between" gap={4}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    width: '50%',
+                  }}
+                >
+                  <FormLabel htmlFor="firstName">First name</FormLabel>
+                  <TextField
+                    {...register('firstName')}
+                    id="firstName"
+                    name="firstName"
+                    placeholder="Enter first name"
+                    error={!!errors.firstName}
+                  />
+                  {errors.firstName && (
+                    <ErrorMessage>{errors.firstName.message}</ErrorMessage>
+                  )}
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    width: '50%',
+                  }}
+                >
+                  <FormLabel htmlFor="lastName">Last name</FormLabel>
+                  <TextField
+                    {...register('lastName')}
+                    id="lastName"
+                    name="lastName"
+                    placeholder="Enter last name"
+                    error={!!errors.lastName}
+                  />
+                  {errors.lastName && (
+                    <ErrorMessage>{errors.lastName.message}</ErrorMessage>
+                  )}
+                </Box>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between" gap={4}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    width: '50%',
+                  }}
+                >
+                  <FormLabel htmlFor="firstName">Phone</FormLabel>
+                  <Controller
+                    control={control}
+                    name="phone"
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <>
+                        <PhoneInput
+                          onChange={onChange}
+                          value={value || ''}
+                          component={PhoneTextField}
+                          label=""
+                          preferredCountries={['ua']}
+                          country="ua"
+                        />
+                        {error?.message && (
+                          <ErrorMessage>{error.message}</ErrorMessage>
+                        )}
+                      </>
+                    )}
+                    rules={{ required: 'Phone number is required' }}
+                  />
+                </Box>
 
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  width: '50%',
-                }}
-              >
-                <FormLabel htmlFor="lastName">Birthday</FormLabel>
-                <DatePicker />
-              </Box>
-            </Stack>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    width: '50%',
+                  }}
+                >
+                  <FormLabel htmlFor="lastName">Birthday</FormLabel>
+                  <DatePicker control={control} name="birthDate" />
+                </Box>
+              </Stack>
+            </Box>
             <Button fullWidth type="submit" variant="outlined">
               Submit
             </Button>
-          </FormControl>
+          </FormContainer>
         </Paper>
       </Stack>
     </Container>

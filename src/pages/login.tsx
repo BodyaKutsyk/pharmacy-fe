@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
@@ -12,11 +13,9 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiError, LoginResponse } from '@/api/api.ts';
-import axiosClient from '@/api/axios-client.ts';
+import { useAuth } from '@/hooks/useAuth.ts';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -55,6 +54,8 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login, isLoading } = useAuth();
+
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordError, setPasswordError] = useState(false);
@@ -73,25 +74,12 @@ export default function Login() {
     }
 
     try {
-      const res = await axiosClient.post<LoginResponse, LoginResponse>(
-        '/auth/login',
-        {
-          email,
-          password,
-        },
-      );
-      localStorage.setItem('accessToken', res.accessToken);
-      navigate('/home');
+      await login({ email, password });
+      navigate('/home', { replace: true });
     } catch (e: unknown) {
-      let msg = 'Failed to login. Please try again.';
-      if (axios.isAxiosError<ApiError>(e)) {
-        msg = e.response?.data?.message ?? e.message ?? msg;
-      } else if (e instanceof Error) {
-        msg = e.message;
-      }
-
       setPasswordError(true);
-      setPasswordErrorMessage(msg);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      setPasswordErrorMessage(e || e?.message || '');
     }
   };
 
@@ -176,7 +164,7 @@ export default function Login() {
               label="Remember me"
             />
             <Button type="submit" fullWidth variant="contained">
-              Sign in
+              {isLoading ? <CircularProgress color="success" /> : 'Sign in'}
             </Button>
           </Box>
         </Card>

@@ -14,8 +14,8 @@ const routes = (isAuthenticated: boolean = false) => [
     element: <LayoutComponent />,
     children: [
       {
-        path: isAuthenticated ? '/' : '/login',
-        element: <Navigate to={isAuthenticated ? '/home' : '/login'} />,
+        index: true,
+        element: <Navigate to={isAuthenticated ? '/home' : '/login'} replace />,
       },
       ...routeList,
       {

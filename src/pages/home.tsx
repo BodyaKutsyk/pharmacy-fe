@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
 import PaidIcon from '@mui/icons-material/Paid';
@@ -11,20 +13,40 @@ import {
   Stack,
   Paper,
   Divider,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionCard } from '@/components/common/action-card';
+import { useGetAllCustomers } from '@/features/customer/hooks/useCustomer.ts';
 import { capitalizeFirstLetter } from '@/utils';
 import { dayOfTime } from '@/utils/dayOfTime.ts';
 
 const partOfDay = dayOfTime();
 
-const Stat = ({ label, value }: { label: string; value: string }) => (
-  <Box sx={{ textAlign: 'center', px: 2 }}>
-    <Typography variant="h6" fontWeight={800}>
-      {value}
-    </Typography>
+const Stat = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | ReactNode;
+}) => (
+  <Box
+    sx={{
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      px: 2,
+    }}
+  >
+    {typeof value === 'string' ? (
+      <Typography variant="h6" fontWeight={800}>
+        {value}
+      </Typography>
+    ) : (
+      value
+    )}
     <Typography variant="caption" color="text.secondary">
       {label}
     </Typography>
@@ -33,6 +55,8 @@ const Stat = ({ label, value }: { label: string; value: string }) => (
 
 const Home = () => {
   const navigate = useNavigate();
+  const { data: customers, isLoading: customersLoading } = useGetAllCustomers();
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack
@@ -65,7 +89,16 @@ const Home = () => {
           <Stat label="Items Low Stock" value="7" />
           <Stat label="Pending Prescriptions" value="12" />
           <Stat label="Expiring Soon" value="4" />
-          <Stat label="Suppliers ETAs Today" value="2" />
+          <Stat
+            label={customersLoading ? '' : 'Customers already registered'}
+            value={
+              (customersLoading ? (
+                <CircularProgress color="success" />
+              ) : (
+                customers?.length.toString()
+              )) || 'N/A'
+            }
+          />
         </Stack>
       </Paper>
 

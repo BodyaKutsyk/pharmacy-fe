@@ -9,8 +9,8 @@ import { capitalizeFirstLetter } from '@/utils';
 
 const navs: TypeNavs[] = [
   {
+    label: 'Dashboard',
     key: HOME_PATH,
-    label: 'home',
     element: (
       <AuthGuard>
         <Home />
@@ -19,7 +19,6 @@ const navs: TypeNavs[] = [
   },
   {
     key: REGISTER_CUSTOMER,
-    label: 'register customer',
     element: (
       <AuthGuard>
         <RegisterCustomer />
@@ -28,7 +27,6 @@ const navs: TypeNavs[] = [
   },
   {
     key: LOGIN_PATH,
-    label: 'login',
     element: <Login />,
   },
 ];
