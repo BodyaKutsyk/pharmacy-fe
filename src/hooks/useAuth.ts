@@ -1,15 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
+
+import { AuthContext } from '@/provider/auth-provider.tsx';
 
 export const useAuth = () => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const ctx = useContext(AuthContext);
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
+  if (!ctx) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
 
-    if (accessToken) {
-      setAccessToken(accessToken);
-    }
-  }, []);
-
-  return { isAuthenticated: !!accessToken };
+  return ctx;
 };

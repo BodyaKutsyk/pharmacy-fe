@@ -1,15 +1,19 @@
 import { PropsWithChildren } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/hooks/useAuth.ts';
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+
+  if (isLoading) {
+    return null;
+  }
 
   if (!isAuthenticated) {
-    navigate('/login');
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
   return <>{children}</>;

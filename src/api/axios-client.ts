@@ -15,7 +15,7 @@ const axiosClient = axios.create({
 // Add a request interceptor
 axiosClient.interceptors.request.use(function (config) {
   // Do something before request is sent
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   if (token) {
     config.headers['Authorization'] = 'Bearer ' + token;
   }
@@ -26,9 +26,12 @@ axiosClient.interceptors.request.use(function (config) {
 axiosClient.interceptors.response.use(
   (response) => response.data,
   (error: AxiosError<ApiError>) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      // window.location.replace(LOGIN_PATH);
+    if (
+      !window.location.pathname.includes(LOGIN_PATH) &&
+      error.response?.status === 401
+    ) {
+      localStorage.removeItem('accessToken');
+      window.location.replace(LOGIN_PATH);
     }
     return Promise.reject(error);
   },
