@@ -13,7 +13,7 @@ type DatePickerProps = Omit<
   MUIDatePickerProps<Dayjs>,
   'value' | 'onChange' | 'name'
 > & {
-  control: Control<any>;
+  control: Control;
   name: string;
 };
 
@@ -25,6 +25,7 @@ export const DatePicker = ({ control, name }: DatePickerProps) => {
         control={control}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <MUIDatePicker
+            disablePast
             format={'DD-MM-YYYY'}
             onChange={(v) => onChange(v?.isValid?.() ? v.toDate() : null)}
             value={value ? dayjs(value as Date) : null}

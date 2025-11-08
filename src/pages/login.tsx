@@ -78,7 +78,6 @@ export default function Login() {
       navigate('/home', { replace: true });
     } catch (e: unknown) {
       setPasswordError(true);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       setPasswordErrorMessage(e || e?.message || '');
     }
   };

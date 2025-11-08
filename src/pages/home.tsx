@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionCard } from '@/components/common/action-card';
 import { useGetAllCustomers } from '@/features/customer/hooks/useCustomer.ts';
+import { useGetAllMedicines } from '@/features/medicine/hooks/useMedicine.ts';
 import { capitalizeFirstLetter } from '@/utils';
 import { dayOfTime } from '@/utils/dayOfTime.ts';
 
@@ -56,6 +57,7 @@ const Stat = ({
 const Home = () => {
   const navigate = useNavigate();
   const { data: customers, isLoading: customersLoading } = useGetAllCustomers();
+  const { data: medicines } = useGetAllMedicines();
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -84,9 +86,10 @@ const Home = () => {
           direction={{ xs: 'column', sm: 'row' }}
           divider={<Divider flexItem orientation="vertical" />}
           spacing={2}
-          justifyContent="space-between"
+          justifyContent="space-evenly"
+          alignItems="center"
         >
-          <Stat label="Items Low Stock" value="7" />
+          <Stat label="Items Stock" value={medicines?.length} />
           <Stat label="Pending Prescriptions" value="12" />
           <Stat label="Expiring Soon" value="4" />
           <Stat
@@ -116,7 +119,7 @@ const Home = () => {
             title="Add Medicine"
             subtitle="New product entry"
             icon={<Inventory2RoundedIcon />}
-            onClick={() => {}}
+            onClick={() => navigate('/medicine/register')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -124,7 +127,7 @@ const Home = () => {
             title="Stock Audit"
             subtitle="Count & adjust"
             icon={<AssignmentRoundedIcon />}
-            onClick={() => {}}
+            onClick={() => navigate('/stock')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>

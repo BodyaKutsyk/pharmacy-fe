@@ -8,13 +8,9 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:jsx-a11y/recommended',
-    'plugin:react/recommended',
     'plugin:prettier/recommended',
-    'plugin:testing-library/react',
     'plugin:react-hooks/recommended',
     'plugin:prettier/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   overrides: [
     {
@@ -38,10 +34,8 @@ module.exports = {
   rules: {
     'react-hooks/rules-of-hooks': 2,
     'react-hooks/exhaustive-deps': 2,
-    'react/no-array-index-key': 2,
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
-    '@typescript-eslint/no-non-null-assertion': 0,
     'no-unused-vars': 'off',
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-unused-vars': [

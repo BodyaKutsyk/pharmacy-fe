@@ -25,6 +25,11 @@ export const darkTheme = createTheme({
         -webkit-box-shadow: 0 0 0 0 transparent inset !important;
       }`,
     },
+    MuiButton: {
+      styleOverrides: {
+        root: { minWidth: 0 },
+      },
+    },
   },
 });
 
@@ -52,6 +57,11 @@ export const lightTheme = createTheme({
       input:-webkit-autofill:active {
         -webkit-box-shadow: 0 0 0 0 transparent inset !important;
       }`,
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: { minWidth: 0 },
+      },
     },
   },
 });
