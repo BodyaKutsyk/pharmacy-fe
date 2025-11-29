@@ -30,6 +30,18 @@ export const darkTheme = createTheme({
         root: { minWidth: 0 },
       },
     },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            transitionDelay: '9999s',
+            transitionProperty: 'background-color, color',
+
+            WebkitTextFillColor: '#000',
+          },
+        },
+      },
+    },
   },
 });
 
@@ -61,6 +73,18 @@ export const lightTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: { minWidth: 0 },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            transitionDelay: '9999s',
+            transitionProperty: 'background-color, color',
+
+            WebkitTextFillColor: '#000',
+          },
+        },
       },
     },
   },

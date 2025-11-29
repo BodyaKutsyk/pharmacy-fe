@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   Box,
   Container,
@@ -9,13 +11,17 @@ import {
 } from '@mui/material';
 import {
   DataGrid,
+  GridActionsCellItem,
   GridColDef,
   GridRenderEditCellParams,
   useGridApiContext,
 } from '@mui/x-data-grid';
 import { toast } from 'react-hot-toast';
+import { FaTrash } from 'react-icons/fa6';
 
+import BackButton from '@/components/common/BackButton';
 import {
+  useDeleteMedicine,
   useGetAllMedicines,
   useUpdateMedicine,
 } from '@/features/medicine/hooks/useMedicine.ts';
@@ -79,8 +85,16 @@ const mapApiToGridRow = (apiEntity: Medicine): MedicineRow => {
 };
 
 const StockAuditPage = () => {
-  const { data: medicines, isLoading } = useGetAllMedicines();
+  const { data: medicinesData, isLoading } = useGetAllMedicines();
   const { mutateAsync } = useUpdateMedicine();
+  const { mutateAsync: deleteMedicine } = useDeleteMedicine();
+
+  const [medicines, setMedicines] = useState<Medicine[]>(medicinesData || []);
+
+  const handleDeleteRow = async (id: number) => {
+    await deleteMedicine(id);
+    setMedicines((prev) => prev.filter((medicine) => medicine.id !== id));
+  };
 
   const handleRowUpdate = async (newRow: MedicineRow) => {
     const oldRow = medicines?.find((m) => m.id === newRow.id);
@@ -146,6 +160,7 @@ const StockAuditPage = () => {
 
     {
       field: 'description',
+      editable: true,
       headerName: 'Description',
       flex: 1,
     },
@@ -154,6 +169,21 @@ const StockAuditPage = () => {
       headerName: 'Required prescription',
       type: 'boolean',
       editable: true,
+    },
+    {
+      field: 'delete',
+      headerName: '',
+      type: 'actions',
+      getActions: ({ id }) => {
+        return [
+          <GridActionsCellItem
+            icon={<FaTrash color="#f50057" />}
+            label="Delete"
+            onClick={() => handleDeleteRow(+id)}
+            showInMenu={false}
+          />,
+        ];
+      },
     },
   ];
 
@@ -172,11 +202,12 @@ const StockAuditPage = () => {
 
   return (
     <Container sx={{ py: 4 }} maxWidth="xl">
+      <BackButton />
       <Stack
         direction="column"
         justifyContent=""
         alignItems="flex-start"
-        sx={{ mb: 3, gap: 4 }}
+        sx={{ mb: 3, gap: 4, height: '80vh' }}
       >
         <Box>
           <Typography variant="h5" fontWeight={800}>
@@ -189,6 +220,7 @@ const StockAuditPage = () => {
           </Typography>
         </Box>
         <DataGrid
+          showToolbar
           processRowUpdate={handleRowUpdate}
           onProcessRowUpdateError={(error) => console.error(error)}
           loading={isLoading}

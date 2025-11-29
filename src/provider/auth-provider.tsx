@@ -8,14 +8,24 @@ import {
 } from 'react';
 
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 import { ApiError, LoginRequest, LoginResponse } from '@/api/api.ts';
 import axiosClient from '@/api/axios-client.ts';
 
 interface AuthContext {
   isLoading: boolean;
+  isAdmin: boolean;
   isAuthenticated: boolean;
   login: (request: LoginRequest) => Promise<void>;
+  logout: () => void;
+}
+
+interface JwtPayload {
+  sub: string;
+  roles: string[];
+  exp: number;
+  iat: number;
 }
 
 const STORAGE_KEY = 'accessToken';
@@ -23,13 +33,26 @@ const STORAGE_KEY = 'accessToken';
 export const AuthContext = createContext<AuthContext>({
   isLoading: false,
   isAuthenticated: false,
+  isAdmin: false,
   login: async () => {},
+  logout: async () => {},
 });
+
+const isValidToken = (token: string): boolean => {
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+    const currentTime = Date.now() / 1000;
+    return decoded.exp > currentTime;
+  } catch (e) {
+    return false;
+  }
+};
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem(STORAGE_KEY),
   );
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const login = useCallback(async ({ email, password }: LoginRequest) => {
@@ -42,6 +65,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           password,
         },
       );
+      const token = res.accessToken;
+      const decoded = jwtDecode<JwtPayload>(token);
+      console.log(decoded);
+      setIsAdmin(res.roles.includes('admin'));
       localStorage.setItem(STORAGE_KEY, res.accessToken);
       setAccessToken(res.accessToken);
       axiosClient.defaults.headers.common.Authorization = `Bearer ${res.accessToken}`;
@@ -58,39 +85,59 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   }, []);
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem(STORAGE_KEY);
-
-    if (accessToken) {
-      setAccessToken(accessToken);
-      axiosClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-    }
-    setIsLoading(false);
+  const logout = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setAccessToken(null);
+    setIsAdmin(false);
+    delete axiosClient.defaults.headers.common.Authorization;
   }, []);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem(STORAGE_KEY);
+
+    if (storedToken && isValidToken(storedToken)) {
+      try {
+        const decoded = jwtDecode<JwtPayload>(storedToken);
+        setAccessToken(storedToken);
+        setIsAdmin(decoded.roles?.includes('admin') ?? false);
+        axiosClient.defaults.headers.common.Authorization = `Bearer ${storedToken}`;
+      } catch (error) {
+        console.error('Token parsing failed', error);
+        logout();
+      }
+    } else if (storedToken) {
+      logout();
+    }
+
+    setIsLoading(false);
+  }, [logout]);
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) {
-        const t = e.newValue;
-        setAccessToken(t || '');
-        if (t) {
-          axiosClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+        if (!e.newValue) {
+          logout();
         } else {
-          delete axiosClient.defaults.headers.common.Authorization;
+          setAccessToken(e.newValue);
+          const decoded = jwtDecode<JwtPayload>(e.newValue);
+          setIsAdmin(decoded.roles?.includes('admin') ?? false);
+          axiosClient.defaults.headers.common.Authorization = `Bearer ${e.newValue}`;
         }
       }
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
-  }, [accessToken]);
+  }, [logout]);
 
   const value = useMemo(
     () => ({
       isAuthenticated: !!accessToken,
-      isLoading: isLoading,
+      isLoading,
       login,
+      logout,
+      isAdmin,
     }),
-    [accessToken, isLoading, login],
+    [accessToken, isAdmin, isLoading, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

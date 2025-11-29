@@ -4,6 +4,7 @@ type NavsChild = {
   key: string;
   label?: string | ReactElement;
   element?: ReactElement;
+  isAdmin?: boolean;
 };
 
 export type TypeNavs = NavsChild & {

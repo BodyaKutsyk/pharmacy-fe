@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
@@ -13,51 +13,35 @@ import {
   Stack,
   Paper,
   Divider,
-  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionCard } from '@/components/common/action-card';
 import { useGetAllCustomers } from '@/features/customer/hooks/useCustomer.ts';
 import { useGetAllMedicines } from '@/features/medicine/hooks/useMedicine.ts';
+import { RecentlyAddedMedicines } from '@/pages/home/components/recently-added-medicines';
+import { Stat } from '@/pages/home/components/stat';
 import { capitalizeFirstLetter } from '@/utils';
 import { dayOfTime } from '@/utils/dayOfTime.ts';
+import willExpireSoon from '@/utils/willExpireSoon.ts';
 
 const partOfDay = dayOfTime();
 
-const Stat = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | ReactNode;
-}) => (
-  <Box
-    sx={{
-      textAlign: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      px: 2,
-    }}
-  >
-    {typeof value === 'string' ? (
-      <Typography variant="h6" fontWeight={800}>
-        {value}
-      </Typography>
-    ) : (
-      value
-    )}
-    <Typography variant="caption" color="text.secondary">
-      {label}
-    </Typography>
-  </Box>
-);
-
-const Home = () => {
+const Index = () => {
   const navigate = useNavigate();
   const { data: customers, isLoading: customersLoading } = useGetAllCustomers();
-  const { data: medicines } = useGetAllMedicines();
+  const { data: medicines, isLoading: medicinesLoading } = useGetAllMedicines();
+
+  const [expireMedicines, setExpireMedicines] = useState(0);
+
+  useEffect(() => {
+    if (medicines?.length) {
+      setExpireMedicines(
+        medicines.filter((m) => willExpireSoon(m.expiryDate?.toString()))
+          .length,
+      );
+    }
+  }, [medicines]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -89,18 +73,21 @@ const Home = () => {
           justifyContent="space-evenly"
           alignItems="center"
         >
-          <Stat label="Items Stock" value={medicines?.length} />
-          <Stat label="Pending Prescriptions" value="12" />
-          <Stat label="Expiring Soon" value="4" />
+          <Stat
+            label="Items Stock"
+            isLoading={medicinesLoading}
+            value={medicines?.length || 'N/A'}
+          />
+          <Stat label="Transactions" value="12" />
+          <Stat
+            label="Expiring Soon"
+            value={expireMedicines}
+            isLoading={medicinesLoading}
+          />
           <Stat
             label={customersLoading ? '' : 'Customers already registered'}
-            value={
-              (customersLoading ? (
-                <CircularProgress color="success" />
-              ) : (
-                customers?.length.toString()
-              )) || 'N/A'
-            }
+            value={customers?.length.toString() || 'N/A'}
+            isLoading={customersLoading}
           />
         </Stack>
       </Paper>
@@ -135,12 +122,13 @@ const Home = () => {
             title="Transactions"
             subtitle="Manage transactions"
             icon={<PaidIcon />}
-            onClick={() => {}}
+            onClick={() => navigate('/transaction/register')}
           />
         </Grid>
       </Grid>
+      <RecentlyAddedMedicines />
     </Container>
   );
 };
 
-export default Home;
+export default Index;

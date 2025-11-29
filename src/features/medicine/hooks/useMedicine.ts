@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { toast } from 'react-hot-toast';
 
 import medicineApi from '@/features/medicine/services/api.ts';
 import {
@@ -35,6 +37,21 @@ export const useUpdateMedicine = () => {
           medicine.id === updatedMedicine.id ? updatedMedicine : medicine,
         );
       });
+    },
+  });
+};
+
+export const useDeleteMedicine = () => {
+  return useMutation({
+    mutationKey: ['delete-medicine'],
+    mutationFn: medicineApi.delete,
+    onSuccess: () => {
+      toast.success('Medicine deleted');
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.message);
+      }
     },
   });
 };

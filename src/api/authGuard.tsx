@@ -4,15 +4,19 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/hooks/useAuth.ts';
 
-export const AuthGuard = ({ children }: PropsWithChildren) => {
-  const { isAuthenticated, isLoading } = useAuth();
+interface AuthGuardProps extends PropsWithChildren {
+  admin?: boolean;
+}
+
+export const AuthGuard = ({ children, admin }: AuthGuardProps) => {
+  const { isAuthenticated, isLoading, isAdmin } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
     return null;
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || (!isAdmin && admin)) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 

@@ -78,7 +78,7 @@ export default function Login() {
       navigate('/home', { replace: true });
     } catch (e: unknown) {
       setPasswordError(true);
-      setPasswordErrorMessage(e || e?.message || '');
+      setPasswordErrorMessage(e?.message || '');
     }
   };
 

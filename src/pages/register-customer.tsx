@@ -19,7 +19,9 @@ import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
 import { z } from 'zod';
 
+import BackButton from '@/components/common/BackButton';
 import { DatePicker } from '@/components/common/date-picker';
+import { ErrorMessage } from '@/components/common/errorMessage';
 import { useAddCustomer } from '@/features/customer/hooks/useCustomer.ts';
 
 const FormContainer = styled('form')(() => ({
@@ -27,11 +29,6 @@ const FormContainer = styled('form')(() => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '36px',
-}));
-
-const ErrorMessage = styled('p')(() => ({
-  color: '#f44336',
-  fontSize: '12px',
 }));
 
 const formSchema = z.object({
@@ -106,6 +103,7 @@ const RegisterCustomer = () => {
   };
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
+      <BackButton />
       <Stack
         direction="column"
         justifyContent="space-between"
@@ -209,7 +207,12 @@ const RegisterCustomer = () => {
                   }}
                 >
                   <FormLabel htmlFor="lastName">Birthday</FormLabel>
-                  <DatePicker control={control} name="birthDate" />
+                  <DatePicker
+                    control={control}
+                    name="birthDate"
+                    disablePast={false}
+                    disableFuture
+                  />
                 </Box>
               </Stack>
             </Box>

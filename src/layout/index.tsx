@@ -11,7 +11,7 @@ const LayoutComponent = () => {
   return (
     <div className="w-full h-full flex flex-col justify-between">
       <HeaderComponent />
-      <div className="px-4 py-20 flex flex-col min-h-[calc(100vh-200px)]">
+      <div className="px-4 pt-20 flex flex-col min-h-[calc(100vh-200px)] overflow-x-auto">
         <ErrorBoundary fallbackRender={fallbackRender}>
           <Suspense
             fallback={

@@ -6,7 +6,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import LocalPharmacyIcon from '@mui/icons-material/LocalPharmacy';
 import {
   Box,
-  CircularProgress,
   Collapse,
   Container,
   InputAdornment,
@@ -17,7 +16,6 @@ import {
   styled,
   Typography,
 } from '@mui/material';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
@@ -26,10 +24,13 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
+import BackButton from '@/components/common/BackButton';
+import Button from '@/components/common/button';
 import CountrySelect, { countries } from '@/components/common/country-select';
 import { DatePicker } from '@/components/common/date-picker';
 import IconWrapper from '@/components/common/icon-wrapper';
 import { useAddMedicine } from '@/features/medicine/hooks/useMedicine.ts';
+import useRecentMedicines from '@/features/medicine/hooks/useRecentMedicines.tsx';
 
 export const medicineDosageUnit = [
   'mg',
@@ -99,7 +100,9 @@ const TextFieldWrapper = styled(Box)(() => ({
 
 const RegisterMedicine = () => {
   const { mutate, isLoading } = useAddMedicine();
+  const { handleAddedMedicine } = useRecentMedicines();
   const navigate = useNavigate();
+
   const {
     handleSubmit,
     register,
@@ -113,10 +116,15 @@ const RegisterMedicine = () => {
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     mutate(data, { onSuccess: () => navigate('/') });
+    handleAddedMedicine({
+      name: data.name,
+      id: `${data.name + data.expiryDate}`,
+    });
   };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
+      <BackButton />
       <Stack
         direction="column"
         justifyContent="space-between"
@@ -238,6 +246,8 @@ const RegisterMedicine = () => {
                     <FormLabel htmlFor="country-select">
                       Expiration date
                     </FormLabel>
+                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                    {/*// @ts-expect-error*/}
                     <DatePicker control={control} name="expiryDate" />
                   </TextFieldWrapper>
                   <TextFieldWrapper sx={{ width: '100%' }}>
@@ -335,12 +345,13 @@ const RegisterMedicine = () => {
               />
             </Box>
             <Button
+              loading={isLoading}
               fullWidth
               type="submit"
               variant="outlined"
               sx={{ height: '50px' }}
             >
-              {isLoading ? <CircularProgress color="success" /> : 'Submit'}
+              Submit
             </Button>
           </FormContainer>
         </Paper>

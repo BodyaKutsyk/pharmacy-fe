@@ -1,6 +1,8 @@
 export type LoginRequest = { email: string; password: string };
 
-export type LoginResponse = { accessToken: string };
+export type Role = 'pharmacist' | 'admin';
+
+export type LoginResponse = { accessToken: string; roles: Role[] };
 
 export type ApiError = {
   message: string;

@@ -2,17 +2,27 @@ import { cloneDeep } from 'lodash';
 import { Link } from 'react-router-dom';
 
 import {
+  ANALYTICS_PATH,
   HOME_PATH,
   LOGIN_PATH,
+  PHARMACISTS_PATH,
   REGISTER_CUSTOMER,
   REGISTER_MEDICINE,
+  REGISTER_TRANSACTION,
   STOCK_AUDIT,
 } from './path';
 import { TypeNavs, TypeRoutes } from './type-navs';
 import { AuthGuard } from '@/api/authGuard.tsx';
-import { Home, Login, RegisterCustomer } from '@/pages';
-import RegisterMedicine from '@/pages/register-medicine.tsx';
-import StockAuditPage from '@/pages/stock-audit.tsx';
+import {
+  Home,
+  Login,
+  RegisterCustomer,
+  RegisterMedicine,
+  RegisterTransaction,
+  StockAudit,
+  Analytics,
+  Pharmacists,
+} from '@/pages';
 import { capitalizeFirstLetter } from '@/utils';
 
 const navs: TypeNavs[] = [
@@ -22,6 +32,25 @@ const navs: TypeNavs[] = [
     element: (
       <AuthGuard>
         <Home />
+      </AuthGuard>
+    ),
+  },
+  {
+    label: 'Analytics',
+    key: ANALYTICS_PATH,
+    element: (
+      <AuthGuard>
+        <Analytics />
+      </AuthGuard>
+    ),
+  },
+  {
+    label: 'Pharmacists',
+    key: PHARMACISTS_PATH,
+    isAdmin: true,
+    element: (
+      <AuthGuard admin>
+        <Pharmacists />
       </AuthGuard>
     ),
   },
@@ -42,10 +71,18 @@ const navs: TypeNavs[] = [
     ),
   },
   {
+    key: REGISTER_TRANSACTION,
+    element: (
+      <AuthGuard>
+        <RegisterTransaction />
+      </AuthGuard>
+    ),
+  },
+  {
     key: STOCK_AUDIT,
     element: (
       <AuthGuard>
-        <StockAuditPage />
+        <StockAudit />
       </AuthGuard>
     ),
   },
@@ -65,9 +102,6 @@ const getRoutes = (arr: TypeRoutes[], nav: TypeNavs, basePath = '') => {
 
   arr.push({
     path: basePath + nav.key,
-    // element: nav.element && (
-    //   <PrivateRoute permission={nav.permission}>{nav.element}</PrivateRoute>
-    // ),
     element: nav.element,
   });
 
@@ -110,6 +144,7 @@ const routeList: TypeRoutes[] = [];
 const navList: TypeNavs[] = navs.map((nav) => ({
   key: nav.key,
   label: nav.label,
+  isAdmin: nav.isAdmin,
 }));
 
 for (const nav of navs) {

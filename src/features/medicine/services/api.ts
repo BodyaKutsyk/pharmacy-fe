@@ -12,6 +12,7 @@ const medicineApi = {
     const { id, ...rest } = medicine;
     return await axiosClient.patch<void, Medicine>(`${BASE_URL}/${id}`, rest);
   },
+  delete: async (id: number) => await axiosClient.delete(`${BASE_URL}/${id}`),
 };
 
 export default medicineApi;

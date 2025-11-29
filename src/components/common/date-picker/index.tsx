@@ -17,7 +17,7 @@ type DatePickerProps = Omit<
   name: string;
 };
 
-export const DatePicker = ({ control, name }: DatePickerProps) => {
+export const DatePicker = ({ control, name, ...props }: DatePickerProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Controller
@@ -35,6 +35,7 @@ export const DatePicker = ({ control, name }: DatePickerProps) => {
                 helperText: error?.message,
               },
             }}
+            {...props}
           />
         )}
         rules={{ required: 'Date is required' }}
