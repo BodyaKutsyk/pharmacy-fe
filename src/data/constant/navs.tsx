@@ -1,3 +1,6 @@
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import GroupIcon from '@mui/icons-material/Group';
 import { cloneDeep } from 'lodash';
 import { Link } from 'react-router-dom';
 
@@ -34,6 +37,7 @@ const navs: TypeNavs[] = [
         <Home />
       </AuthGuard>
     ),
+    icon: DashboardIcon,
   },
   {
     label: 'Analytics',
@@ -43,6 +47,7 @@ const navs: TypeNavs[] = [
         <Analytics />
       </AuthGuard>
     ),
+    icon: AssessmentIcon,
   },
   {
     label: 'Pharmacists',
@@ -53,6 +58,7 @@ const navs: TypeNavs[] = [
         <Pharmacists />
       </AuthGuard>
     ),
+    icon: GroupIcon,
   },
   {
     key: REGISTER_CUSTOMER,
@@ -145,6 +151,7 @@ const navList: TypeNavs[] = navs.map((nav) => ({
   key: nav.key,
   label: nav.label,
   isAdmin: nav.isAdmin,
+  icon: nav.icon,
 }));
 
 for (const nav of navs) {

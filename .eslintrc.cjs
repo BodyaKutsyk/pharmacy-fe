@@ -37,6 +37,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'no-unused-vars': 'off',
+    'no-explicit-any': 'off',
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-unused-vars': [
       2,
