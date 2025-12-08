@@ -8,6 +8,7 @@ const RegisterTransaction = lazy(() => import('@/pages/register-transaction'));
 const StockAudit = lazy(() => import('@/pages/stock-audit'));
 const Analytics = lazy(() => import('@/pages/analytics'));
 const Pharmacists = lazy(() => import('@/pages/pharmacists'));
+const Customers = lazy(() => import('@/pages/customers'));
 
 export {
   Home,
@@ -18,4 +19,5 @@ export {
   StockAudit,
   Analytics,
   Pharmacists,
+  Customers,
 };

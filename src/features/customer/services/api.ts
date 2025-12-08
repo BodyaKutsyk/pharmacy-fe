@@ -11,10 +11,12 @@ const customerApi = {
   add: (customer: CustomerMutation) =>
     axiosClient.post<CustomerMutation, Customer>(BASE_URL, customer),
   getAll: () => axiosClient.get<void, Customer[], ApiError>(BASE_URL),
-  getById: (id: string) => axiosClient.get(`${BASE_URL}/${id}`),
-  delete: (id: string) => axiosClient.delete(`${BASE_URL}/${id}`),
-  update: (id: string, customer: CustomerMutation) =>
-    axiosClient.patch(`${BASE_URL}/${id}`, customer),
+  getById: (id: number) => axiosClient.get(`${BASE_URL}/${id}`),
+  delete: (id: number) => axiosClient.delete(`${BASE_URL}/${id}`),
+  update: (customer: Omit<Customer, 'pharmacistId'>) => {
+    const { id, ...payload } = customer;
+    return axiosClient.patch(`${BASE_URL}/${customer.id}`, payload);
+  },
 };
 
 export default customerApi;

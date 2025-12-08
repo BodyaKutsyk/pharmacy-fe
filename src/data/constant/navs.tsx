@@ -1,3 +1,4 @@
+import { LocalPharmacyOutlined } from '@mui/icons-material';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
@@ -6,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import {
   ANALYTICS_PATH,
+  CUSTOMERS_PATH,
   HOME_PATH,
   LOGIN_PATH,
   PHARMACISTS_PATH,
@@ -25,6 +27,7 @@ import {
   StockAudit,
   Analytics,
   Pharmacists,
+  Customers,
 } from '@/pages';
 import { capitalizeFirstLetter } from '@/utils';
 
@@ -50,6 +53,16 @@ const navs: TypeNavs[] = [
     icon: AssessmentIcon,
   },
   {
+    label: 'Customers',
+    key: CUSTOMERS_PATH,
+    element: (
+      <AuthGuard>
+        <Customers />
+      </AuthGuard>
+    ),
+    icon: GroupIcon,
+  },
+  {
     label: 'Pharmacists',
     key: PHARMACISTS_PATH,
     isAdmin: true,
@@ -58,7 +71,7 @@ const navs: TypeNavs[] = [
         <Pharmacists />
       </AuthGuard>
     ),
-    icon: GroupIcon,
+    icon: LocalPharmacyOutlined,
   },
   {
     key: REGISTER_CUSTOMER,

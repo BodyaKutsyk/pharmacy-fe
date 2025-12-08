@@ -1,18 +1,10 @@
 export interface Customer {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
   birthDate: string;
   phone: string;
   pharmacistId: string;
-}
-
-export interface CustomerApiError {
-  response: {
-    data: {
-      message: string;
-    };
-  };
 }
 
 export type CustomerMutation = Partial<

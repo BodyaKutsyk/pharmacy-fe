@@ -6,3 +6,4 @@ export const REGISTER_TRANSACTION = '/transaction/register';
 export const STOCK_AUDIT = '/stock';
 export const ANALYTICS_PATH = '/analytics';
 export const PHARMACISTS_PATH = '/pharmacists';
+export const CUSTOMERS_PATH = '/customers';
