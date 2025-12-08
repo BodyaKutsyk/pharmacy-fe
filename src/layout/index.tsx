@@ -13,7 +13,7 @@ const LayoutComponent = () => {
     <div className="w-full h-full flex flex-col justify-between">
       <HeaderComponent />
       <Sidebar />
-      <div className="px-4 pt-20 flex flex-col min-h-[calc(100vh-200px)] overflow-x-auto">
+      <div className="px-4 pt-20 flex flex-col min-h-[calc(100vh-200px)] ml-[59px] overflow-x-auto">
         <ErrorBoundary fallbackRender={fallbackRender}>
           <Suspense
             fallback={
