@@ -78,7 +78,12 @@ export default function Login() {
       navigate('/home', { replace: true });
     } catch (e: unknown) {
       setPasswordError(true);
-      setPasswordErrorMessage(e?.message || '');
+
+      if (e instanceof Error) {
+        setPasswordErrorMessage(e.message);
+      } else {
+        setPasswordErrorMessage('An unexpected error occurred during login.');
+      }
     }
   };
 

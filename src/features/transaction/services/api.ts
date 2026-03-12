@@ -17,7 +17,7 @@ const transactionsApi = {
     await axiosClient.post(BASE_URL, data),
   addMedicines: async (
     transactionId: string,
-    medicines: TransactionMedicineRequest,
+    medicines: TransactionMedicineRequest['medicines'],
   ) =>
     await axiosClient.post(ADD_MEDICINE, {
       transactionId,

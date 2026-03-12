@@ -4,10 +4,12 @@ import transactionsApi from '@/features/transaction/services/api.ts';
 import { TransactionMutation } from '@/features/transaction/services/types.ts';
 
 const createTransaction = async (data: TransactionMutation) => {
-  const transactionId = await transactionsApi.initialize({
+  const response = await transactionsApi.initialize({
     totalValue: data.totalValue,
     phone: data?.phone,
   });
+
+  const transactionId = response.data;
 
   console.log(transactionId);
 

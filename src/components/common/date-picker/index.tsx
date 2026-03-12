@@ -4,41 +4,47 @@ import {
   DatePickerProps as MUIDatePickerProps,
 } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, { Dayjs } from 'dayjs';
-import { type Control, Controller } from 'react-hook-form';
+import dayjs from 'dayjs';
+import { type Control, Controller, FieldValues, Path } from 'react-hook-form';
 
-type DatePickerProps = Omit<
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  MUIDatePickerProps<Dayjs>,
-  'value' | 'onChange' | 'name'
-> & {
-  control: Control;
-  name: string;
-};
+interface DatePickerProps<T extends FieldValues>
+  extends Omit<
+    MUIDatePickerProps<false>,
+    'value' | 'onChange' | 'slotProps' | 'renderInput'
+  > {
+  control: Control<T>;
+  name: Path<T>;
+  label?: string;
+}
 
-export const DatePicker = ({ control, name, ...props }: DatePickerProps) => {
+export const DatePicker = <T extends FieldValues>({
+  control,
+  name,
+  label,
+  ...props
+}: DatePickerProps<T>) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Controller
-        name={name || 'date'}
+        name={name}
         control={control}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <MUIDatePicker
-            disablePast
-            format={'DD-MM-YYYY'}
-            onChange={(v) => onChange(v?.isValid?.() ? v.toDate() : null)}
-            value={value ? dayjs(value as Date) : null}
+            {...props}
+            label={label}
+            value={value ? dayjs(value) : null}
+            onChange={(newValue) => {
+              onChange(newValue?.isValid() ? newValue.toDate() : null);
+            }}
             slotProps={{
               textField: {
                 error: !!error,
                 helperText: error?.message,
+                fullWidth: true,
               },
             }}
-            {...props}
           />
         )}
-        rules={{ required: 'Date is required' }}
       />
     </LocalizationProvider>
   );

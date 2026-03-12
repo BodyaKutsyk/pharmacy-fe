@@ -246,8 +246,6 @@ const RegisterMedicine = () => {
                     <FormLabel htmlFor="country-select">
                       Expiration date
                     </FormLabel>
-                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                    {/*// @ts-expect-error*/}
                     <DatePicker control={control} name="expiryDate" />
                   </TextFieldWrapper>
                   <TextFieldWrapper sx={{ width: '100%' }}>

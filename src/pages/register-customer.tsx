@@ -11,6 +11,7 @@ import { styled } from '@mui/material';
 import Button from '@mui/material/Button';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
+import axios from 'axios';
 import dayjs from 'dayjs';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -22,7 +23,7 @@ import { z } from 'zod';
 import BackButton from '@/components/common/BackButton';
 import { DatePicker } from '@/components/common/date-picker';
 import { ErrorMessage } from '@/components/common/errorMessage';
-import { useAddCustomer } from '@/features/customer/hooks/useCustomer.ts';
+import { useAddCustomer } from '@/features/customer/hooks/useCustomer';
 
 const FormContainer = styled('form')(() => ({
   width: '100%',
@@ -91,10 +92,10 @@ const RegisterCustomer = () => {
       },
       onError: (e) => {
         let message = 'Failed to register customer';
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-        if (e?.response.data.message) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-          message = e.response.data.response;
+
+        if (axios.isAxiosError(e)) {
+          message =
+            e.response?.data?.message || e.response?.data?.response || message;
         }
 
         toast.error(message);
