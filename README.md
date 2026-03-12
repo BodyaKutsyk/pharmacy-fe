@@ -1,41 +1,33 @@
+# 💊 Pharmacy Web Application - Frontend
 
-### Getting started
+A modern, responsive single-page application (SPA) built to manage pharmacy operations. This repository contains the client-side code, focused on delivering a fast, intuitive user interface for browsing and managing pharmacy data.
 
-Run the following command on your local environment:
+**Live Demo:** [https://pharmacy-fe-rgzs.onrender.com/](https://pharmacy-fe-rgzs.onrender.com/)
 
-```shell
-git clone https://github.com/BodyaKutsyk/pharmacy-fe.git
+### 🔐 Test Credentials
+To explore the application, please use the following credentials:
+- **Login:** `user@example.com`
+- **Password:** `qwerty`
+
+## 🛠 Tech Stack
+- **Framework:** React + Vite
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Package Manager:** pnpm
+
+## 🚀 Getting Started
+
+Run the following commands in your local environment to get the project up and running:
+
+```bash
+# Clone the repository
+git clone [https://github.com/BodyaKutsyk/pharmacy-fe.git](https://github.com/BodyaKutsyk/pharmacy-fe.git)
+
+# Navigate into the directory
 cd pharmacy-fe
+
+# Install dependencies
 pnpm install
-```
 
-Then, you can run locally in development mode with live reload:
-
-```shell
+# Start the development server
 pnpm run dev
-```
-
-Open http://localhost:5173 with your favorite browser to see your project.
-
-```shell
-.
-├── README.md                       # README file
-├── .github                         # GitHub folder
-├── .husky                          # Husky configuration
-├── public                          # Public assets folder
-├── src
-│   ├── apis                        # Common apis folder
-│   ├── components                  # Component folder
-│   ├── data                        # Data constants JS Pages
-│   └── features                    # Features folder
-│   ├── hooks                       # Hooks customs folder
-│   ├── layout                      # Layout Pages
-│   └── pages                       # React JS Pages
-│   ├── provider                    # Provider folder
-│   └── routes                      # Routes folder
-│   ├── ts                          # Type and Enum folder
-│   ├── utils                       # Utility functions
-├── tailwind.config.js              # Tailwind CSS configuration
-└── tsconfig.json                   # TypeScript configuration
-```
-
